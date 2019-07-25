@@ -1,0 +1,78 @@
+package main
+
+import (
+	"fmt"
+	"log"
+)
+
+func MapDemo() {
+
+	var r1 = make(map[string]string)
+	r1["s"] = "s"
+	//access map
+	fmt.Println(r1["s"])
+
+	//iterate map
+	for key, value := range r1 {
+		fmt.Println("Key:", key, "Value:", value)
+	}
+}
+
+type SubjectModel struct {
+	Marks        int
+	ObserverList []*ObserverModel
+}
+type ObserverModel struct {
+	SubjectModel *SubjectModel
+	Marks        int
+}
+
+type Subject interface {
+	AttachSubSuscriber()
+	DetachSubSubsriber()
+	GetState() int
+	SetState(marks int)
+	Notify()
+}
+type Observer interface {
+	Update()
+}
+
+func (s *SubjectModel) AttachSubSuscriber(o *ObserverModel) {
+	s.ObserverList = append(s.ObserverList, o)
+}
+func (s *SubjectModel) Notify() {
+	for _, o := range s.ObserverList {
+		o.Update()
+	}
+}
+func (s *SubjectModel) SetState(m int) {
+	s.Marks = m
+
+}
+func (s *SubjectModel) GetState() int {
+	return s.Marks
+}
+
+//----------------------Observer
+func (o *ObserverModel) SetSubject(s *SubjectModel) {
+	o.SubjectModel = s
+}
+func (o *ObserverModel) Update() {
+	if o == nil {
+		log.Print("O is nil")
+	} else {
+		m := o.SubjectModel.GetState()
+		fmt.Println("assa%v", m)
+	}
+}
+func main() {
+	var SubjectModel SubjectModel
+	var ObserverModel ObserverModel
+	(&ObserverModel).SetSubject(&SubjectModel)
+	(&SubjectModel).AttachSubSuscriber(&ObserverModel)
+	(&SubjectModel).SetState(12)
+	(&SubjectModel).Notify()
+	(&SubjectModel).SetState(120)
+	(&SubjectModel).Notify()
+}
